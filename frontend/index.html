@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Academy Student Portal</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; background-color: #f4f6f9; }
+        .container { max-width: 600px; background: white; padding: 25px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        h2 { color: #333; }
+        input, button { width: 100%; padding: 10px; margin: 8px 0; box-sizing: border-box; }
+        button { background-color: #007bff; color: white; border: none; cursor: pointer; border-radius: 4px; }
+        button:hover { background-color: #0056b3; }
+        ul { list-style-type: none; padding: 0; }
+        li { background: #e9ecef; margin: 5px 0; padding: 10px; border-radius: 4px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Academy Student Registration</h2>
+        <form id="studentForm">
+            <input type="text" id="name" placeholder="Student Name" required>
+            <input type="text" id="course" placeholder="Enrolled Course" required>
+            <button type="submit">Register Student</button>
+        </form>
+
+        <h3>Enrolled Students</h3>
+        <ul id="studentList"></ul>
+    </div>
+
+    <script>
+        const API_URL = '/api/students';
+
+        async function fetchStudents() {
+            try {
+                const res = await fetch(API_URL);
+                const students = await res.json();
+                const list = document.getElementById('studentList');
+                list.innerHTML = '';
+                students.forEach(s => {
+                    const li = document.createElement('li');
+                    li.textContent = `${s.id}. ${s.name} - ${s.course}`;
+                    list.appendChild(li);
+                });
+            } catch (err) {
+                console.error('Error loading students:', err);
+            }
+        }
+
+        document.getElementById('studentForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const name = document.getElementById('name').value;
+            const course = document.getElementById('course').value;
+
+            try {
+                await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, course })
+                });
+                document.getElementById('name').value = '';
+                document.getElementById('course').value = '';
+                fetchStudents();
+            } catch (err) {
+                console.error('Error adding student:', err);
+            }
+        });
+
+        fetchStudents();
+    </script>
+</body>
+</html>

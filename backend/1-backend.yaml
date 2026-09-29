@@ -1,0 +1,44 @@
+# Path: ~academy-project/backend/1-backend.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: academy-backend-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: academy-backend
+  template:
+    metadata:
+      labels:
+        app: academy-backend
+    spec:
+      containers:
+        - name: backend
+          image: academy-backend:v1
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 5000
+          env:
+            - name: DB_HOST
+              value: "postgres-service"
+            - name: DB_NAME
+              value: "academydb"
+            - name: DB_USER
+              value: "academy_user"
+            - name: DB_PASS
+              value: "DevSecOps@911"
+            - name: DB_PORT
+              value: "5432"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend-service
+spec:
+  type: NodePort
+  ports:
+    - port: 5000
+      targetPort: 5000
+  selector:
+    app: academy-backend
