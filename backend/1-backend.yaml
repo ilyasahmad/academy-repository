@@ -13,7 +13,7 @@ spec:
       labels:
         app: academy-backend
     spec:
-      containers:
+    containers:
         - name: backend
           image: academy-backend:v1
           imagePullPolicy: IfNotPresent
